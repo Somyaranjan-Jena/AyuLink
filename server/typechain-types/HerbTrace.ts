@@ -28,64 +28,124 @@ import type {
 } from "./common";
 
 export declare namespace HerbTrace {
+  export type TraceEventStruct = {
+    status: PromiseOrValue<string>;
+    location: PromiseOrValue<string>;
+    stakeholder: PromiseOrValue<string>;
+    notes: PromiseOrValue<string>;
+    eventTimestamp: PromiseOrValue<string>;
+    blockTimestamp: PromiseOrValue<BigNumberish>;
+  };
+
+  export type TraceEventStructOutput = [
+    string,
+    string,
+    string,
+    string,
+    string,
+    BigNumber
+  ] & {
+    status: string;
+    location: string;
+    stakeholder: string;
+    notes: string;
+    eventTimestamp: string;
+    blockTimestamp: BigNumber;
+  };
+
   export type HerbBatchStruct = {
-    batchId: PromiseOrValue<BigNumberish>;
+    batchId: PromiseOrValue<string>;
     farmerName: PromiseOrValue<string>;
     location: PromiseOrValue<string>;
-    timestamp: PromiseOrValue<BigNumberish>;
-    status: PromiseOrValue<string>;
+    herbType: PromiseOrValue<string>;
+    quantityKg: PromiseOrValue<BigNumberish>;
+    gpsCoordinates: PromiseOrValue<string>;
+    harvestDate: PromiseOrValue<string>;
+    farmingMethod: PromiseOrValue<string>;
+    qualityScore: PromiseOrValue<string>;
+    creationTimestamp: PromiseOrValue<BigNumberish>;
+    history: HerbTrace.TraceEventStruct[];
   };
 
   export type HerbBatchStructOutput = [
-    BigNumber,
+    string,
+    string,
     string,
     string,
     BigNumber,
-    string
+    string,
+    string,
+    string,
+    string,
+    BigNumber,
+    HerbTrace.TraceEventStructOutput[]
   ] & {
-    batchId: BigNumber;
+    batchId: string;
     farmerName: string;
     location: string;
-    timestamp: BigNumber;
-    status: string;
+    herbType: string;
+    quantityKg: BigNumber;
+    gpsCoordinates: string;
+    harvestDate: string;
+    farmingMethod: string;
+    qualityScore: string;
+    creationTimestamp: BigNumber;
+    history: HerbTrace.TraceEventStructOutput[];
   };
 }
 
 export interface HerbTraceInterface extends utils.Interface {
   functions: {
-    "batchCounter()": FunctionFragment;
-    "createHerbBatch(string,string)": FunctionFragment;
-    "getHerbHistory(uint256)": FunctionFragment;
-    "herbBatches(uint256)": FunctionFragment;
+    "addTraceEvent(string,string,string,string,string,string)": FunctionFragment;
+    "createHerbBatch(string,string,string,string,uint256,string,string,string,string)": FunctionFragment;
+    "getHerbHistory(string)": FunctionFragment;
+    "herbBatches(string)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "batchCounter"
+      | "addTraceEvent"
       | "createHerbBatch"
       | "getHerbHistory"
       | "herbBatches"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "batchCounter",
-    values?: undefined
+    functionFragment: "addTraceEvent",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "createHerbBatch",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getHerbHistory",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "herbBatches",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "batchCounter",
+    functionFragment: "addTraceEvent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -102,23 +162,37 @@ export interface HerbTraceInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "BatchCreated(uint256,string,uint256)": EventFragment;
+    "BatchCreated(string,string,uint256)": EventFragment;
+    "BatchUpdated(string,string,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "BatchCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BatchUpdated"): EventFragment;
 }
 
 export interface BatchCreatedEventObject {
-  batchId: BigNumber;
+  batchId: string;
   farmerName: string;
   timestamp: BigNumber;
 }
 export type BatchCreatedEvent = TypedEvent<
-  [BigNumber, string, BigNumber],
+  [string, string, BigNumber],
   BatchCreatedEventObject
 >;
 
 export type BatchCreatedEventFilter = TypedEventFilter<BatchCreatedEvent>;
+
+export interface BatchUpdatedEventObject {
+  batchId: string;
+  newStatus: string;
+  timestamp: BigNumber;
+}
+export type BatchUpdatedEvent = TypedEvent<
+  [string, string, BigNumber],
+  BatchUpdatedEventObject
+>;
+
+export type BatchUpdatedEventFilter = TypedEventFilter<BatchUpdatedEvent>;
 
 export interface HerbTrace extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -147,89 +221,182 @@ export interface HerbTrace extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    batchCounter(overrides?: CallOverrides): Promise<[BigNumber]>;
+    addTraceEvent(
+      _batchId: PromiseOrValue<string>,
+      _newStatus: PromiseOrValue<string>,
+      _newLocation: PromiseOrValue<string>,
+      _stakeholder: PromiseOrValue<string>,
+      _notes: PromiseOrValue<string>,
+      _eventTimestamp: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     createHerbBatch(
+      _batchId: PromiseOrValue<string>,
       _farmerName: PromiseOrValue<string>,
       _location: PromiseOrValue<string>,
+      _herbType: PromiseOrValue<string>,
+      _quantityKg: PromiseOrValue<BigNumberish>,
+      _gpsCoordinates: PromiseOrValue<string>,
+      _harvestDate: PromiseOrValue<string>,
+      _farmingMethod: PromiseOrValue<string>,
+      _qualityScore: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getHerbHistory(
-      _batchId: PromiseOrValue<BigNumberish>,
+      _batchId: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[HerbTrace.HerbBatchStructOutput]>;
 
     herbBatches(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, string, string, BigNumber, string] & {
-        batchId: BigNumber;
+      [
+        string,
+        string,
+        string,
+        string,
+        BigNumber,
+        string,
+        string,
+        string,
+        string,
+        BigNumber
+      ] & {
+        batchId: string;
         farmerName: string;
         location: string;
-        timestamp: BigNumber;
-        status: string;
+        herbType: string;
+        quantityKg: BigNumber;
+        gpsCoordinates: string;
+        harvestDate: string;
+        farmingMethod: string;
+        qualityScore: string;
+        creationTimestamp: BigNumber;
       }
     >;
   };
 
-  batchCounter(overrides?: CallOverrides): Promise<BigNumber>;
+  addTraceEvent(
+    _batchId: PromiseOrValue<string>,
+    _newStatus: PromiseOrValue<string>,
+    _newLocation: PromiseOrValue<string>,
+    _stakeholder: PromiseOrValue<string>,
+    _notes: PromiseOrValue<string>,
+    _eventTimestamp: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   createHerbBatch(
+    _batchId: PromiseOrValue<string>,
     _farmerName: PromiseOrValue<string>,
     _location: PromiseOrValue<string>,
+    _herbType: PromiseOrValue<string>,
+    _quantityKg: PromiseOrValue<BigNumberish>,
+    _gpsCoordinates: PromiseOrValue<string>,
+    _harvestDate: PromiseOrValue<string>,
+    _farmingMethod: PromiseOrValue<string>,
+    _qualityScore: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getHerbHistory(
-    _batchId: PromiseOrValue<BigNumberish>,
+    _batchId: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<HerbTrace.HerbBatchStructOutput>;
 
   herbBatches(
-    arg0: PromiseOrValue<BigNumberish>,
+    arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, string, string, BigNumber, string] & {
-      batchId: BigNumber;
+    [
+      string,
+      string,
+      string,
+      string,
+      BigNumber,
+      string,
+      string,
+      string,
+      string,
+      BigNumber
+    ] & {
+      batchId: string;
       farmerName: string;
       location: string;
-      timestamp: BigNumber;
-      status: string;
+      herbType: string;
+      quantityKg: BigNumber;
+      gpsCoordinates: string;
+      harvestDate: string;
+      farmingMethod: string;
+      qualityScore: string;
+      creationTimestamp: BigNumber;
     }
   >;
 
   callStatic: {
-    batchCounter(overrides?: CallOverrides): Promise<BigNumber>;
+    addTraceEvent(
+      _batchId: PromiseOrValue<string>,
+      _newStatus: PromiseOrValue<string>,
+      _newLocation: PromiseOrValue<string>,
+      _stakeholder: PromiseOrValue<string>,
+      _notes: PromiseOrValue<string>,
+      _eventTimestamp: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     createHerbBatch(
+      _batchId: PromiseOrValue<string>,
       _farmerName: PromiseOrValue<string>,
       _location: PromiseOrValue<string>,
+      _herbType: PromiseOrValue<string>,
+      _quantityKg: PromiseOrValue<BigNumberish>,
+      _gpsCoordinates: PromiseOrValue<string>,
+      _harvestDate: PromiseOrValue<string>,
+      _farmingMethod: PromiseOrValue<string>,
+      _qualityScore: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     getHerbHistory(
-      _batchId: PromiseOrValue<BigNumberish>,
+      _batchId: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<HerbTrace.HerbBatchStructOutput>;
 
     herbBatches(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, string, string, BigNumber, string] & {
-        batchId: BigNumber;
+      [
+        string,
+        string,
+        string,
+        string,
+        BigNumber,
+        string,
+        string,
+        string,
+        string,
+        BigNumber
+      ] & {
+        batchId: string;
         farmerName: string;
         location: string;
-        timestamp: BigNumber;
-        status: string;
+        herbType: string;
+        quantityKg: BigNumber;
+        gpsCoordinates: string;
+        harvestDate: string;
+        farmingMethod: string;
+        qualityScore: string;
+        creationTimestamp: BigNumber;
       }
     >;
   };
 
   filters: {
-    "BatchCreated(uint256,string,uint256)"(
+    "BatchCreated(string,string,uint256)"(
       batchId?: null,
       farmerName?: null,
       timestamp?: null
@@ -239,44 +406,85 @@ export interface HerbTrace extends BaseContract {
       farmerName?: null,
       timestamp?: null
     ): BatchCreatedEventFilter;
+
+    "BatchUpdated(string,string,uint256)"(
+      batchId?: null,
+      newStatus?: null,
+      timestamp?: null
+    ): BatchUpdatedEventFilter;
+    BatchUpdated(
+      batchId?: null,
+      newStatus?: null,
+      timestamp?: null
+    ): BatchUpdatedEventFilter;
   };
 
   estimateGas: {
-    batchCounter(overrides?: CallOverrides): Promise<BigNumber>;
+    addTraceEvent(
+      _batchId: PromiseOrValue<string>,
+      _newStatus: PromiseOrValue<string>,
+      _newLocation: PromiseOrValue<string>,
+      _stakeholder: PromiseOrValue<string>,
+      _notes: PromiseOrValue<string>,
+      _eventTimestamp: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     createHerbBatch(
+      _batchId: PromiseOrValue<string>,
       _farmerName: PromiseOrValue<string>,
       _location: PromiseOrValue<string>,
+      _herbType: PromiseOrValue<string>,
+      _quantityKg: PromiseOrValue<BigNumberish>,
+      _gpsCoordinates: PromiseOrValue<string>,
+      _harvestDate: PromiseOrValue<string>,
+      _farmingMethod: PromiseOrValue<string>,
+      _qualityScore: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getHerbHistory(
-      _batchId: PromiseOrValue<BigNumberish>,
+      _batchId: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     herbBatches(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    batchCounter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    addTraceEvent(
+      _batchId: PromiseOrValue<string>,
+      _newStatus: PromiseOrValue<string>,
+      _newLocation: PromiseOrValue<string>,
+      _stakeholder: PromiseOrValue<string>,
+      _notes: PromiseOrValue<string>,
+      _eventTimestamp: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     createHerbBatch(
+      _batchId: PromiseOrValue<string>,
       _farmerName: PromiseOrValue<string>,
       _location: PromiseOrValue<string>,
+      _herbType: PromiseOrValue<string>,
+      _quantityKg: PromiseOrValue<BigNumberish>,
+      _gpsCoordinates: PromiseOrValue<string>,
+      _harvestDate: PromiseOrValue<string>,
+      _farmingMethod: PromiseOrValue<string>,
+      _qualityScore: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getHerbHistory(
-      _batchId: PromiseOrValue<BigNumberish>,
+      _batchId: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     herbBatches(
-      arg0: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

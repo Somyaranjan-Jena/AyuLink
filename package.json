@@ -1,7 +1,16 @@
 {
+  "name": "sih-root",
+  "private": true,
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:backend dev:frontend",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "start": "cd backend && npm run start"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  },
   "dependencies": {
-    "dotenv": "^17.2.2",
-    "ethers": "^6.15.0",
-    "express": "^5.1.0"
+    "axios": "^1.12.2"
   }
 }
