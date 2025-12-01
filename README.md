@@ -1,137 +1,132 @@
-🌿 AyuLink: Blockchain-Based Traceability for Ayurveda
+🌿 ✨ AYULINK: BLOCKCHAIN-BASED TRACEABILITY FOR AYURVEDA ✨
 
-A “farm-to-pharmacy” platform ensuring authenticity, quality, and trust in the Ayurvedic supply chain using Blockchain and AI.
+A “farm-to-pharmacy” authenticity and traceability platform powered by Blockchain + AI
 
-📖 Overview
+📖 🚀 OVERVIEW
 
-AyuLink addresses rising concerns about adulteration, quality inconsistency, and lack of transparency in the Ayurvedic supply chain.
-Using Blockchain, each batch of herbs receives a tamper-proof digital passport documenting its entire journey—from cultivation to the final product.
+AyuLink tackles the issues of adulteration, quality inconsistency, and lack of transparency in the Ayurvedic supply chain.
+Using Blockchain, every herb batch receives a tamper-proof digital passport, while an integrated AI model predicts its Quality Score using environmental parameters.
 
-An integrated AI model predicts a Quality Score based on environmental conditions such as soil pH, rainfall, and sunlight.
+✨ ⭐ KEY FEATURES
+🔗 Immutable Blockchain Ledger
 
-✨ Key Features
+Stores all herb lifecycle events on an EVM-compatible blockchain.
 
-🔗 Immutable Ledger
-EVM-compatible blockchain permanently stores batch origin & processing data.
+🤖 AI-Powered Quality Prediction
 
-🤖 AI Quality Score
-Linear Regression model predicts herb quality (e.g., 8.7/10) from environmental inputs.
+Linear Regression model predicts a Quality Score (e.g., 8.7/10) from pH, rainfall, sunlight, etc.
 
-📱 QR Code Verification
-Consumers scan a QR code to instantly verify authenticity and review the batch history.
+📱 Instant QR Code Verification
+
+Consumers scan to verify authenticity and view the entire batch history.
 
 🧬 Digital Twinning
+
 Each harvest receives a unique, non-duplicable Batch ID.
 
-🧑‍🌾 Role-Based Access
+🧑‍🌾 Role-Based Interfaces
 
-Farmers: register harvests
+Farmers: Register harvests
 
-Supply Chain: update processing events
+Supply Chain: Update processing stages
 
-Consumers: verify authenticity
+Consumers: Verify authenticity
 
-🛠 Tech Stack
+🛠 🧰 TECH STACK
 Frontend
 
-Framework: React (Vite)
+⚡ React (Vite)
 
-Language: TypeScript
+🟦 TypeScript
 
-Styling: Tailwind CSS, shadcn/ui
+🎨 Tailwind CSS, shadcn/ui
 
-Libraries: axios, qrcode
+📦 Libraries: axios, qrcode
 
-Backend (Node.js)
+Backend
 
-Runtime: Node.js
+🟩 Node.js
 
-Framework: Express.js
+🚏 Express.js
 
-Blockchain Interaction: Ethers.js
+🔗 Ethers.js (Blockchain interaction)
 
-Utilities: nanoid, dotenv
+🔑 nanoid, dotenv
 
 Blockchain
 
-Network: EVM-compatible
-(tested on Hardhat, ready for Sepolia / Polygon)
+🌐 EVM-compatible networks (Hardhat, Sepolia, Polygon)
 
-Language: Solidity
+🔐 Solidity
 
-Dev Environment: Hardhat
+🧪 Hardhat development
 
 Machine Learning
 
-Model: Linear Regression
+📈 Linear Regression
 
-Libraries: Scikit-learn, Pandas
+📦 Pandas, Scikit-learn
 
-API: Flask (Python) serving predictions to Node.js
+🔥 Flask API serving predictions
 
-⚙️ System Architecture
+⚙️ 🏗 SYSTEM ARCHITECTURE (Workflow Summary)
 
-Registration
-Farmer submits harvest data through the React UI.
+🌱 Harvest Registration → Farmer submits batch data.
 
-AI Analysis
-Node.js sends environmental data to Flask ML API → returns Quality Score.
+🤖 AI Analysis → Flask ML API returns quality score.
 
-Blockchain Commit
-Backend calls createHerbBatch on the Smart Contract—data is stored immutably.
+⛓ Blockchain Commit → createHerbBatch records everything immutably.
 
-Tracking
-Supply chain partners add events via addTraceEvent.
+📦 Event Tracking → Supply chain adds processing events.
 
-Verification
-Consumers fetch complete history using getHerbHistory.
+🔍 Consumer Verification → getHerbHistory returns complete lineage.
 
-🚀 Getting Started
+🚀 🛠 GETTING STARTED
 Prerequisites
 
-Node.js
+✔ Node.js
+✔ Python
+✔ MetaMask or Web3 wallet
 
-Python (for ML Service)
-
-MetaMask or compatible wallet
-
-1. Deploy Smart Contract
+1️⃣ Smart Contract Deployment
 cd smart-contracts
-npx hardhat node        # Start local blockchain
+npx hardhat node
 npx hardhat run scripts/deploy.js --network localhost
-# Copy the deployed Contract Address and ABI for backend configuration
+# Copy the Contract Address and ABI
 
-2. Backend Setup (Node.js)
+2️⃣ Backend Setup
 cd backend
 npm init -y
 npm install express ethers nanoid dotenv
-# Add Contract Address + Private Key to .env
+# Add Contract Address & Private Key to .env
 node server.js
 
-3. ML Service Setup (Python)
+3️⃣ Machine Learning Service Setup
 cd ml-service
 pip install flask scikit-learn pandas
 python app.py
 
-4. Frontend Setup
+4️⃣ Frontend Setup
 cd frontend
 npm install
 npm install axios qrcode
 npm run dev
 
-📡 API Endpoints
+📡 📘 API ENDPOINTS
 Method	Endpoint	Description
-POST	/api/herbs	Registers a new herb batch; triggers AI scoring + blockchain commit
-PUT	/api/herbs/:id/update	Adds new traceability event (e.g., Shipping, Packaging)
-GET	/api/herbs/:id	Retrieves full batch history & verification details
-GET	/api/stats	Returns dashboard blockchain/network statistics
-🔮 Future Roadmap
+POST	/api/herbs	Register new batch + AI + blockchain commit
+PUT	/api/herbs/:id/update	Add traceability event
+GET	/api/herbs/:id	Retrieve batch history
+GET	/api/stats	Network/blockchain stats
+🔮 🌱 FUTURE ROADMAP
+📡 IoT Integration
 
-IoT Integration
-Real-time monitoring of temperature & humidity during transit.
+Real-time temp/humidity monitoring during logistics.
 
-Advanced AI Models
-Upgrade from Linear Regression → Neural Networks for more accurate quality predictions.
+🧠 Advanced AI Models
 
-Offline Mode
-Allow farmers to input data without internet; sync when online.
+Shift from Linear Regression → Neural Networks.
+
+🔌 Offline Mode for Farmers
+
+Allow offline data entry with later synchronization.
